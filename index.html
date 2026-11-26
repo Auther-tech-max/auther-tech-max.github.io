@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理学原理 · 学习工作台</title>
+<style>
+/* ============ 基础与主题 ============ */
+:root{
+  --bg:#fafafa;
+  --surface:#ffffff;
+  --surface-2:#f4f5f7;
+  --border:#e6e8eb;
+  --border-strong:#d3d7dd;
+  --text:#1f2328;
+  --text-2:#57606a;
+  --text-3:#8b949e;
+  --primary:#3b5c8f;      /* 学术蓝 */
+  --primary-soft:#eef2f8;
+  --accent:#8f6b3b;       /* 点缀褐 */
+  --good:#2d6a4f;         /* 优 */
+  --mid:#b07d3d;          /* 尚可 */
+  --bad:#a1403a;          /* 欠妥 */
+  --danger:#c0392b;
+  --shadow:0 1px 3px rgba(31,35,40,.06), 0 4px 14px rgba(31,35,40,.05);
+  --shadow-lg:0 6px 24px rgba(31,35,40,.10);
+  --radius:10px;
+  --font:"Iowan Old Style","Songti SC","STSong","Source Han Serif SC","Noto Serif SC","Georgia",serif;
+  --font-ui:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-ui);font-size:14.5px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.hidden{display:none!important}
+
+/* ============ 布局 ============ */
+.app{max-width:1040px;margin:0 auto;padding:0 22px 80px}
+header.site{display:flex;align-items:center;gap:14px;padding:22px 0 14px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.brand-ico{width:40px;height:40px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#2a4363);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:20px;font-weight:700}
+.brand-name{font-family:var(--font);font-weight:700;font-size:19px;letter-spacing:.5px}
+.brand-sub{font-size:12px;color:var(--text-2);margin-top:1px}
+.site-actions{margin-left:auto;display:flex;gap:8px}
+
+/* ============ 顶部导航 ============ */
+nav.tabs{display:flex;gap:4px;padding:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;margin-bottom:22px;flex-wrap:wrap}
+nav.tabs button{flex:1;min-width:120px;padding:9px 12px;border:none;background:transparent;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:var(--font-ui);transition:all .15s}
+nav.tabs button:hover{color:var(--primary)}
+nav.tabs button.active{background:var(--surface);color:var(--primary);box-shadow:var(--shadow);font-weight:600}
+
+/* ============ 通用卡片 ============ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+.card + .card{margin-top:16px}
+.section-title{font-family:var(--font);font-size:17px;font-weight:600;margin-bottom:6px}
+.section-desc{color:var(--text-2);font-size:13px;margin-bottom:16px}
+h2.page-title{font-family:var(--font);font-size:22px;font-weight:700;margin-bottom:4px}
+h2.page-title small{font-size:13px;font-weight:400;color:var(--text-2);margin-left:8px}
+p.page-sub{color:var(--text-2);font-size:13.5px;margin-bottom:20px}
+
+/* ============ 按钮 ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;line-height:1}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover{background:#2f4d79;color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger:hover{background:var(--danger);color:#fff}
+
+/* ============ 角色选卡 ============ */
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:6px 0 4px}
+.role-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .15s;position:relative}
+.role-card:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.role-card.selected{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 1px var(--primary) inset}
+.role-card h3{font-family:var(--font);font-size:16px;margin-bottom:6px}
+.role-card .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin-bottom:8px;font-weight:600}
+.tag.high{background:#eef2f8;color:var(--primary)}
+.tag.mid{background:#f5f0e6;color:var(--accent)}
+.tag.low{background:#eef6ef;color:var(--good)}
+.role-card p{font-size:12.5px;color:var(--text-2)}
+.role-card ul{margin-top:8px;padding-left:0;list-style:none;font-size:12px;color:var(--text-2)}
+.role-card ul li{padding:2px 0;display:flex;gap:6px}
+
+/* ============ 设置行 ============ */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .label{font-size:13.5px;font-weight:500}
+.setting-row .hint{font-size:12px;color:var(--text-3);margin-top:2px}
+.setting-row .control{display:flex;align-items:center;gap:8px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:7px;padding:3px}
+.seg button{border:none;background:transparent;padding:6px 14px;border-radius:6px;font-size:12.5px;color:var(--text-2);cursor:pointer}
+.seg button.active{background:var(--surface);color:var(--primary);box-shadow:var(--shadow);font-weight:600}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:28px;height:28px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font-size:15px;cursor:pointer;line-height:1}
+.stepper button:hover{border-color:var(--primary);color:var(--primary)}
+.stepper .val{min-width:44px;text-align:center;font-weight:600;font-size:13.5px}
+
+/* ============ 知识地图 ============ */
+.map-chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.chapter{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);transition:all .15s}
+.chapter .num{font-size:11px;letter-spacing:.5px;color:var(--text-3);font-weight:600}
+.chapter h3{font-family:var(--font);font-size:16px;margin:4px 0 8px}
+.chapter ul{list-style:none;padding:0}
+.chapter ul li{padding:6px 0;display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);border-top:1px dashed var(--border);cursor:pointer;transition:all .1s}
+.chapter ul li:hover{color:var(--primary)}
+.chapter ul li .dot{flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--border-strong);margin-top:7px}
+.chapter.warn{border-color:var(--bad)}
+.chapter.warn .badge-weak{display:inline-block;font-size:10.5px;background:#fbeceb;color:var(--bad);padding:1px 7px;border-radius:12px;margin-left:6px;font-weight:600}
+.badge-weak{font-size:10.5px;background:#fbeceb;color:var(--bad);padding:1px 7px;border-radius:12px;font-weight:600}
+.legend{font-size:12px;color:var(--text-2);display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* ============ 情境信息卡 ============ */
+.info-card{background:linear-gradient(180deg,var(--primary-soft),#f5f7fb);border:1px solid #d8e0ec;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.info-card h4{font-family:var(--font);font-size:14.5px;color:var(--primary);margin-bottom:10px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+.info-grid .ig{font-size:13px}
+.info-grid .ig b{color:var(--text-2);font-weight:500;margin-right:6px}
+.info-grid .ig span{color:var(--text)}
+
+/* ============ 情境/题干 ============ */
+.story{font-family:var(--font);font-size:15.5px;line-height:1.8;color:var(--text);background:var(--surface);border-left:3px solid var(--primary);padding:4px 0 4px 14px;margin-bottom:16px}
+.story .kicker{font-family:var(--font-ui);font-size:11.5px;letter-spacing:1px;color:var(--text-3);margin-bottom:6px}
+.story p + p{margin-top:6px}
+.choices{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.choice{display:block;text-align:left;padding:13px 15px;border:1px solid var(--border);border-radius:9px;background:var(--surface);cursor:pointer;font-family:var(--font-ui);font-size:13.5px;color:var(--text);transition:all .12s;line-height:1.5}
+.choice:hover{border-color:var(--primary);background:var(--primary-soft)}
+.choice.selected{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 1px var(--primary) inset}
+.choice.submitting{opacity:.5;pointer-events:none}
+
+/* 客观题选项(判断/单选/多选) */
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:13.5px;transition:all .12s;background:var(--surface)}
+.quiz-opt:hover{border-color:var(--primary)}
+.quiz-opt.selected{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 1px var(--primary) inset}
+.quiz-opt .qk{flex-shrink:0;width:22px;height:22px;border:1.5px solid var(--border-strong);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.quiz-opt.selected .qk{border-color:var(--primary);color:var(--primary)}
+.quiz-opt.multi .qk{border-radius:5px}
+
+/* ============ 过程信息条 ============ */
+.progress-bar{height:6px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin:14px 0 8px}
+.progress-bar > i{display:block;height:100%;background:var(--primary);border-radius:4px;transition:width .3s}
+.meta-line{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--text-2);margin-bottom:14px}
+.counter{font-weight:600;color:var(--text)}
+.kn-badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;background:var(--primary-soft);color:var(--primary);padding:2px 9px;border-radius:14px;font-weight:600}
+.timer{font-variant-numeric:tabular-nums;font-weight:600}
+.timer.warn{color:var(--danger)}
+
+/* ============ 结果 / 评价 ============ */
+.verdict{border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid;font-size:13.5px}
+.verdict h4{font-family:var(--font);font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.verdict.good{background:#f0f7f2;border-color:#cde5d4;color:#245a3a}
+.verdict.mid{background:#faf6ee;border-color:#e8dcc2;color:#7a5a24}
+.verdict.bad{background:#faf0ef;border-color:#e6cdca;color:#8c3731}
+.diff-list{list-style:none;padding:4px 0 0}
+.diff-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.diff-list li:last-child{border-bottom:none}
+.diff-list .st{font-size:12px;padding:2px 8px;border-radius:12px;font-weight:600}
+.st.best{background:#f0f7f2;color:var(--good)}
+.st.ok{background:#faf6ee;color:var(--mid)}
+.st.poor{background:#faf0ef;color:var(--bad)}
+.st.timeout{background:#eef1f5;color:var(--text-2)}
+
+/* 标签卡 */
+.done{display:inline-block;font-size:13px;padding:3px 10px;border-radius:7px;font-weight:600}
+.done.best{background:#e7f2ec;color:var(--good)}
+.done.ok{background:#f6eedd;color:var(--mid)}
+.done.poor{background:#f6e4e2;color:var(--bad)}
+.done.exit{background:#eef1f5;color:var(--text-2)}
+
+/* ============ 弹窗 ============ */
+.modal{position:fixed;inset:0;background:rgba(31,35,40,.42);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-card{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:86vh;overflow-y:auto;padding:24px}
+.modal-card h3{font-family:var(--font);font-size:17px;margin-bottom:14px}
+.modal-card .close-x{float:right;border:none;background:transparent;font-size:18px;cursor:pointer;color:var(--text-3);line-height:1}
+.kn-card{background:var(--primary-soft);border:1px solid #d8e0ec;border-radius:9px;padding:14px 16px;margin-bottom:14px;font-size:13px;line-height:1.7}
+.kn-card h4{color:var(--primary);margin-bottom:6px;font-family:var(--font)}
+.push-right{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+
+/* ============ 学习档案 ============ */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:18px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat-card .v{font-family:var(--font);font-size:26px;font-weight:700;color:var(--primary)}
+.stat-card .k{font-size:12px;color:var(--text-2);margin-top:3px}
+.history-list{list-style:none;padding:0}
+.history-item{border:1px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:10px;background:var(--surface);box-shadow:var(--shadow)}
+.history-item .h-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.history-item .h-title{font-weight:600;font-size:14px}
+.history-item .h-sub{font-size:12.5px;color:var(--text-2);display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}
+.kn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11.5px;padding:2px 8px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2)}
+.chip.weak{background:#fbeceb;border-color:#e6cdca;color:var(--bad)}
+
+/* ============ 空态 ============ */
+.empty{text-align:center;padding:36px 20px;color:var(--text-3);font-size:13.5px}
+
+/* ============ 知识点弱项面板(知识地图顶部) ============ */
+.weak-hint{background:#fdf7f6;border:1px solid #ecd4d0;border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7a3a34}
+.weak-hint b{color:var(--bad)}
+
+/* ============ 页脚 / 提示 ============ */
+footer{text-align:center;color:var(--text-3);font-size:12px;margin-top:34px;border-top:1px solid var(--border);padding-top:16px}
+.hint-line{font-size:12.5px;color:var(--text-2);background:var(--surface-2);padding:9px 14px;border-radius:8px;margin-bottom:16px}
+
+/* ============ 响应式 ============ */
+@media (max-width:680px){
+  .role-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+  nav.tabs button{min-width:0;flex:1}
+  .app{padding:0 14px 60px}
+}
+
+/* ============ 滚动条 ============ */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#d0d4d9;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#b9bfc7}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="brand-ico">管</div>
+  <div>
+    <div class="brand-name">管理学原理 · 学习工作台</div>
+    <div class="brand-sub">知识梳理 · 趣味问答 · 沙盘模拟 · 学习档案</div>
+  </div>
+  <div class="site-actions">
+    <button class="btn sm" onclick="resetAll()">重置</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="knowledge" class="active" onclick="switchTab('knowledge')">知识梳理</button>
+  <button data-tab="quiz" onclick="switchTab('quiz')">趣味问答</button>
+  <button data-tab="sim" onclick="switchTab('sim')">沙盘模拟</button>
+  <button data-tab="record" onclick="switchTab('record')">学习档案</button>
+</nav>
+
+<main class="app">
+  <!-- ============ 知识梳理 ============ -->
+  <section id="tab-knowledge" class="tab-panel">
+    <h2 class="page-title">知识梳理 <small>管理学原理 · 核心章节</small></h2>
+    <p class="page-sub">点击任一条目可查看该知识点的详细内容。<span style="color:var(--bad)">红色弱项</span>标记来自你的答题记录，将随时间积累更新。</p>
+    <div id="weakHint" class="weak-hint hidden"></div>
+    <div class="legend">
+      <span><i style="background:var(--primary)"></i> 已掌握</span>
+      <span><i style="background:var(--bad)"></i> 薄弱（答题曾选错）</span>
+      <span><i style="background:var(--border-strong)"></i> 未测评</span>
+    </div>
+    <div id="knowledgeMap" class="map-chapters"></div>
+  </section>
+
+  <!-- ============ 趣味问答 ============ -->
+  <section id="tab-quiz" class="tab-panel hidden">
+    <!-- 配置面板 -->
+    <div id="quizSetup">
+      <h2 class="page-title">趣味问答 <small>判断题 · 单选题 · 多选题</small></h2>
+      <p class="page-sub">客观题快速自测基础概念，适合碎片化练习。答错的知识点会被标记为薄弱。</p>
+      <div class="card">
+        <div class="setting-row">
+          <div><div class="label">选择题型</div><div class="hint">支持判断、单选、多选，可多选</div></div>
+          <div class="control">
+            <div class="seg">
+              <button data-qtype="judge" onclick="toggleQType('judge',this)">判断</button>
+              <button data-qtype="single" onclick="toggleQType('single',this)">单选</button>
+              <button data-qtype="multi" onclick="toggleQType('multi',this)">多选</button>
+            </div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div><div class="label">题量</div><div class="hint">本组抽取的题目数量（默认 8）</div></div>
+          <div class="control"><div class="stepper"><button onclick="stepVal('quizCount',-1)">−</button><span class="val" id="quizCountVal">8</span><button onclick="stepVal('quizCount',1)">+</button></div></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="label">难度</div><div class="hint">影响题目选择范围</div></div>
+          <div class="control"><div class="seg"><button data-qdiff="1" onclick="setQuizDiff(1,this)" class="active">入门</button><button data-qdiff="2" onclick="setQuizDiff(2,this)">进阶</button></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn primary block" onclick="startQuiz()">开始答题</button>
+        </div>
+      </div>
+    </div>
+    <!-- 答题面板 -->
+    <div id="quizRun" class="hidden">
+      <div class="card">
+        <div class="meta-line">
+          <span class="counter" id="quizProg">第 1 / 8 题</span>
+          <span class="kn-badge" id="quizKn"></span>
+          <span class="timer" id="quizTimer"></span>
+        </div>
+        <div class="progress-bar"><i id="quizBar" style="width:0%"></i></div>
+        <div id="quizQuestion"></div>
+        <div id="quizChoices"></div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn block" onclick="submitQuiz(false)">提交</button>
+          <button class="btn ghost" onclick="quizPrev()">上一题</button>
+          <button class="btn ghost" onclick="endQuiz()">结束</button>
+        </div>
+      </div>
+    </div>
+    <!-- 结果面板 -->
+    <div id="quizResult" class="hidden">
+      <div class="card">
+        <h3 style="font-family:var(--font);font-size:18px;margin-bottom:14px">本组结果</h3>
+        <div class="stat-grid" style="margin-bottom:10px">
+          <div class="stat-card"><div class="v" id="qScore">0</div><div class="k">得分</div></div>
+          <div class="stat-card"><div class="v" id="qCorrect">0</div><div class="k">答对</div></div>
+          <div class="stat-card"><div class="v" id="qWrong">0</div><div class="k">答错</div></div>
+          <div class="stat-card"><div class="v" id="qRate">0%</div><div class="k">正确率</div></div>
+        </div>
+        <div id="quizReview"></div>
+        <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end">
+          <button class="btn" onclick="switchTab('quiz');resetQuizViews()">再测一组</button>
+          <button class="btn primary" onclick="switchTab('knowledge')">去巩固薄弱章节</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 沙盘模拟 ============ -->
+  <section id="tab-sim" class="tab-panel hidden">
+    <!-- 配置 -->
+    <div id="simSetup">
+      <h2 class="page-title">沙盘模拟 <small>情境决策 · 核心实训</small></h2>
+      <p class="page-sub">选择身份，在连贯剧情中面对情境决策。每个事件因你的身份不同，可选项与评判标准也不同。</p>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:12px">选择你的扮演身份</div>
+        <p class="hint" style="font-size:12.5px;color:var(--text-2);margin-bottom:12px">三种身份拥有三套独立题库。权责不同，能做的决定也不同。</p>
+        <div class="role-grid">
+          <div class="role-card" data-role="high" onclick="selectRole('high')">
+            <h3>高层管理者</h3>
+            <span class="tag high">战略定方向</span>
+            <p>CEO / 总经理 · 决定组织方向、资源配置、长远目标</p>
+            <ul>
+              <li>◆ 可定战略 · 批预算</li>
+              <li>✦ 信息全面 · 问责最重</li>
+              <li>✦ 全程全局 · 可授权</li>
+            </ul>
+          </div>
+          <div class="role-card" data-role="mid" onclick="selectRole('mid')">
+            <h3>中层管理者</h3>
+            <span class="tag mid">执行与转化</span>
+            <p>部门经理 · 承上启下，把战略转化为可执行方案</p>
+            <ul>
+              <li>◆ 可调度本部门资源</li>
+              <li>✦ 上传下达 · 夹缝平衡</li>
+              <li>✦ 跨部门协调</li>
+            </ul>
+          </div>
+          <div class="role-card" data-role="low" onclick="selectRole('low')">
+            <h3>基层管理者</h3>
+            <span class="tag low">现场与执行</span>
+            <p>主管 / 班组长 · 直接带领一线员工，落实具体任务</p>
+            <ul>
+              <li>◆ 可排班 · 现场指挥</li>
+              <li>✦ 直面一线 · 信息偏局部</li>
+              <li>✦ 需向上请示</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">情境设置</div>
+        <div class="setting-row">
+          <div><div class="label">难度档位</div><div class="hint">入门情境简单；进阶多矛盾、两难决策</div></div>
+          <div class="control"><div class="seg" id="simDiffSeg">
+            <button data-sdiff="1" onclick="setSimDiff(1,this)" class="active">入门</button>
+            <button data-sdiff="2" onclick="setSimDiff(2,this)">进阶</button>
+          </div></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="label">剧情节点数量</div><div class="hint">本局连续抽取的情境数（默认 8）</div></div>
+          <div class="control"><div class="stepper"><button onclick="stepVal('simCount',-1)">−</button><span class="val" id="simCountVal">8</span><button onclick="stepVal('simCount',1)">+</button></div></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="label">每题时限（秒）</div><div class="hint">倒计时归零按未达优处理；可关闭</div></div>
+          <div class="control"><div class="stepper"><button onclick="stepVal('simTime',-10)">−</button><span class="val" id="simTimeVal">90</span><button onclick="stepVal('simTime',10)">+</button></div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn primary block" id="startSimBtn" onclick="startSim()">开始情境</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 前置信息卡 -->
+    <div id="simInfo" class="hidden">
+      <div class="card">
+        <h3 style="font-family:var(--font);font-size:16px;margin-bottom:14px">情境前置信息卡</h3>
+        <div class="info-card" id="infoCardBody"></div>
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" onclick="openInfoCard()">已了解背景，开始</button></div>
+      </div>
+    </div>
+
+    <!-- 情境进行 -->
+    <div id="simRun" class="hidden">
+      <div class="card">
+        <div class="meta-line">
+          <span class="counter" id="simProg">节点 1 / 8</span>
+          <span class="kn-badge" id="simKn"></span>
+          <span class="timer" id="simTimer"></span>
+        </div>
+        <div class="progress-bar"><i id="simBar" style="width:0%"></i></div>
+        <div id="simStory"></div>
+        <div id="simChoices"></div>
+        <div class="has-timeout hidden" style="margin-bottom:14px;display:flex;gap:10px">
+          <button class="btn sm danger" onclick="submitSim(true)">时间到，弃权</button>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn block" id="simSubmitBtn" onclick="submitSim(false)">采纳此决定</button>
+          <button class="btn ghost" onclick="quitSim()">退出本局</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结果面板 -->
+    <div id="simResult" class="hidden">
+      <div class="card">
+        <h3 style="font-family:var(--font);font-size:18px;margin-bottom:4px">本局复盘 · <span id="sumRoleName"></span></h3>
+        <div class="hint" style="font-size:12.5px;color:var(--text-2);margin-bottom:14px" id="sumRoleTag"></div>
+        <div id="sumScore"></div>
+        <div id="sumReview"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end">
+          <button class="btn" onclick="copyReport()">复制复盘小结</button>
+          <button class="btn" onclick="resetSimViews()">再玩一局</button>
+          <button class="btn primary" onclick="goWeakReview()">一键跳转 · 薄弱知识点</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 学习档案 ============ -->
+  <section id="tab-record" class="tab-panel hidden">
+    <h2 class="page-title">个人学习档案 <small>本机本地保存 · 清除浏览器缓存后才会消失</small></h2>
+    <p class="page-sub">记录你的历史对局、错题、正确率与复盘记录，无需登录。</p>
+    <div class="card">
+      <div class="section-title">总体概览</div>
+      <div class="stat-grid" style="margin-top:12px">
+        <div class="stat-card"><div class="v" id="recSims">0</div><div class="k">沙盘对局</div></div>
+        <div class="stat-card"><div class="v" id="recQuiz">0</div><div class="k">问答组数</div></div>
+        <div class="stat-card"><div class="v" id="recAcc">--</div><div class="k">综合正确率</div></div>
+        <div class="stat-card"><div class="v" id="recWeak">0</div><div class="k">薄弱知识点</div></div>
+        <div class="stat-card"><div class="v" id="recScore">0</div><div class="k">累计沙盘得分</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">薄弱知识点</div>
+      <div class="hint" style="font-size:12.5px;color:var(--text-2);margin-bottom:10px">来自答题/决策中选错的知识点，点击可跳转对应章节。</div>
+      <div id="weakList" class="kn-chips"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">历史对局记录</div>
+      <ul id="historyList" class="history-list"></ul>
+    </div>
+  </section>
+
+  <footer>
+    管理学原理 · 学习工作台 — 纯前端本地版 · 数据仅存于本机 localStorage
+  </footer>
+</main>
+
+<!-- 通用弹窗容器 -->
+<div id="modalRoot" class="modal hidden"></div>
+
+<script src="knowledge.js"></script>
+<script src="quiz-data.js"></script>
+<script src="sim-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
