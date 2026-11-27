@@ -182,6 +182,33 @@ p.page-sub{color:var(--text-2);font-size:13.5px;margin-bottom:20px}
 .kn-card h4{color:var(--primary);margin-bottom:6px;font-family:var(--font)}
 .push-right{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
 
+/* ============ 章节完整学习页 ============ */
+.study-modal{max-width:860px;padding:30px 36px;align-self:flex-start;margin:24px 0}
+.study-modal .close-x{position:static;float:right;font-size:20px}
+.study-hero{border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:18px}
+.study-hero .num{font-size:12px;letter-spacing:1px;color:var(--text-3);font-weight:600}
+.study-hero h3{font-family:var(--font);font-size:24px;margin:6px 0 8px}
+.study-hero .desc{color:var(--text-2);font-size:13.5px}
+.study-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.study-block h4{font-family:var(--font);font-size:15px;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.study-block h4 .no{display:inline-flex;width:22px;height:22px;border-radius:6px;background:var(--primary);color:#fff;align-items:center;justify-content:center;font-size:12px;font-family:var(--font-ui)}
+.study-block p{font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px}
+.study-block p:last-child{margin-bottom:0}
+.study-list{list-style:none;padding:0}
+.study-list li{position:relative;padding:6px 0 6px 20px;font-size:13.5px;line-height:1.7}
+.study-list li::before{content:"";position:absolute;left:0;top:14px;width:7px;height:7px;border-radius:50%;background:var(--primary);opacity:.6}
+.study-point{border-left:3px solid var(--primary);padding:4px 0 4px 14px;margin:10px 0}
+.study-point .pt{font-family:var(--font);font-weight:600;color:var(--text);margin-bottom:6px}
+.study-point .pb{font-size:13.5px;line-height:1.8;color:var(--text)}
+.study-point .pb p{margin-bottom:6px}
+.study-point .pb p:last-child{margin-bottom:0}
+.study-note{background:#fdf7f6;border:1px solid #ecd4d0;border-radius:9px;padding:12px 16px;font-size:13px;color:#7a3a34;margin:8px 0}
+.study-case{background:#f0f7f2;border:1px solid #cde5d4;border-radius:9px;padding:13px 16px;font-size:13px;color:#245a3a;line-height:1.75;margin:8px 0}
+.study-summary{background:var(--primary-soft);border:1px solid #d8e0ec;border-radius:9px;padding:14px 16px;font-size:13px;color:var(--primary);line-height:1.75;margin-top:6px}
+.study-toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.study-toc .toc-item{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12.5px;cursor:pointer;color:var(--text);transition:all .12s}
+.study-toc .toc-item:hover{border-color:var(--primary);color:var(--primary)}
+
 /* ============ 学习档案 ============ */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:18px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;box-shadow:var(--shadow)}
@@ -299,6 +326,7 @@ footer{text-align:center;color:var(--text-3);font-size:12px;margin-top:34px;bord
         <div style="display:flex;gap:10px;margin-top:14px">
           <button class="btn block" onclick="submitQuiz(false)">提交</button>
           <button class="btn ghost" onclick="quizPrev()">上一题</button>
+          <button class="btn ghost" onclick="quizNextRaw()">下一题</button>
           <button class="btn ghost" onclick="endQuiz()">结束</button>
         </div>
       </div>
@@ -574,6 +602,142 @@ const KN_INDEX = {};
 KNOWLEDGE_CHAPTERS.forEach(ch=>{
   ch.points.forEach(p=>{ p.chapterId = ch.id; p.chapterTitle = ch.title; KN_INDEX[p.id] = p; });
 });
+
+/* ===============================================================================
+   章节完整学习深度内容库（用于「前往本章节完整学习」的详细学习页）
+   每章包含：学习目标 goals、知识脉络 outline、逐点精讲 deep(按知识点id)、
+   经典案例 case、易错提醒 pitfall、本章小结 summary
+   =============================================================================== */
+const CHAPTER_STUDY = {
+  ch_manage: {
+    goals:["理解管理的内涵、特征与存在的必要性","掌握管理的四大基本职能及其相互关系","清晰辨析效率与效果两个管理核心概念","掌握管理者分类、角色定位与所需技能","理解不同管理层级的权责边界与决策差异"],
+    outline:["管理的定义与产生条件","管理的四大职能：计划·组织·领导·控制","效率 vs 效果","管理者的三种角色与三类技能","管理层次：高层·中层·基层"],
+    deep:{
+      kp_manage_def:"<p><b>精确理解：</b>管理的定义包含三个关键要素：①协调他人活动（对象是人而非单纯物）；②整合组织资源（人力、资金、信息、技术、时间等）；③以有效率且有效果的方式达成组织目标（导向是目标）。没有目标，管理就失去方向；没有协调，资源就只是零散要素。</p><p><b>效率与效果的辨析：</b>效率是“正确地做事”（do things right），关注投入与产出的比值，讲求少花钱多办事；效果是“做正确的事”（do the right things），关注目标是否达成。两者缺一不可——只讲效率不讲效果可能南辕北辙，只讲效果不讲效率可能代价过高。管理是效率与效果的统一。</p><p><b>四大职能的关系：</b>计划（定目标定路径）→组织（搭结构分资源）→领导（带队伍激士气）→控制（查偏差纠方向），四大职能循环往复，构成管理的闭环。计划是起点，控制是闭环保障。</p>",
+      kp_manager_role:"<p><b>明茨伯格十种角色：</b>①人际角色——挂名首脑（礼仪性职责）、领导者（激励与指导下属）、联络者（对外联系）；②信息角色——监听者（收集信息）、传播者（向下传递信息）、发言人（对外发布信息）；③决策角色——企业家（发起变革）、混乱处理者（处理危机冲突）、资源分配者（配置资源）、谈判者（对外谈判）。</p><p><b>三类技能哪层更重要：</b>技术技能随层级升高所占比重下降；概念技能随层级升高而增强（高层约五成以上依赖概念技能）；人际技能则在各层级都同样重要（约保持在1/3左右）。判断管理层级时，概念技能是核心区分的标志。</p>",
+      kp_org_level:"<p><b>三层管理者的实务差异：</b>高层（CEO/总经理）定战略定方向、配置全局资源、代表组织对外，决策站位最高、信息最全面、问责最重；中层（部门经理）承上启下，把战略拆解为可执行方案，负责跨部门协调和资源调度，身处“上传下达”的夹缝中；基层（主管/班组长）直接面对一线员工，落实排班、现场指挥等具体任务，信息偏局部，需随时向上请示。</p><p><b>权责边界红线：</b>高层不可越过中层直接干预基层具体事务（越级指挥），基层不可越权拍板全局性决策。权责错位轻则效率低下，重则引发组织混乱、责任推诿。</p>"
+    },
+    case:"<p>某公司CEO决定将全部新产品研发预算一次投入一个未经充分验证的项目，要求研发部门一周内上线，同时绕过项目经理直接指挥一线工程师改需求，最终项目因目标不清、多头指挥而延期。此案例说明：高层应聚焦战略与资源配置，尊重层级管理链条，避免越级指挥；同时效率与效果需兼顾——既要追赶进度（效率），也要确保方向正确（效果）。</p>",
+    pitfall:"易错提醒：①把“管理”等同于“发号施令”——真正的管理核心是协调与服务；②把“效率”等同于“效果”——两者含义不同，应分开判断；③把“职位权力”等同于“领导力”——拥有职位不等于拥有影响力。",
+    summary:"管理的本质是协调人、整合资源、达成目标。它的灵魂在于用正确的方法（效率）做正确的事（效果）。不同层级管理者角色不同、技能结构不同，理解这一点以建立正确的“管理者视角”。"
+  },
+  ch_plan: {
+    goals:["理解计划的含义、作用与分类标准","掌握计划编制的完整步骤","理解目标管理（MBO）的实质与关键要素","区分计划与控制的联系"],
+    outline:["计划的定义与作用","计划的多种分类","计划编制八大步骤","目标管理（MBO）：德鲁克","计划是控制的依据"],
+    deep:{
+      kp_plan_essence:"<p><b>计划为什么重要：</b>计划对未来行动预先作出安排，核心作用有三：①指明方向——让组织与成员知道往哪走；②减少不确定性带来的风险，变被动为主动；③为控制提供标准——没有计划，就无法判断实际执行是否“跑偏”。所以计划与控制是一体两面。</p><p><b>分类要会分：</b>按时间分：长期（3年以上）、中期（1-3年）、短期（1年以内）；按性质分：战略计划（全局性长远性）、战术计划（部门性较短）、作业计划（最具体可操作）；按明确性分：指令性计划（必须严格执行）与指导性计划（留有弹性余地）。</p><p><b>常见考法：</b>给出一个企业动作，判断它属于哪类计划。记住关键词即可。</p>",
+      kp_plan_steps:"<p><b>八步走：</b>①确定目标（起点，需可量化）→②分析环境与前提（外部机会/威胁）→③识别备选方案（穷尽可行方案）→④评估备选方案（按权重与标准比较）→⑤选择方案（做抉择）→⑥拟定派生计划（子计划细化）→⑦编制预算（把计划数字化）→⑧在执行中反馈修正（计划的动态性）。</p><p><b>要点：</b>目标是计划的起点，也是考核的尺度；预算是计划的“量化表达”，预算一旦确定就带有约束力。计划不是一劳永逸，外部环境变化要滚动修订。</p>",
+      kp_mbo:"<p><b>目标管理是谁提出的：</b>管理大师彼得·德鲁克（Peter Drucker）于1954年在《管理的实践》中提出。</p><p><b>核心思想：</b>由上下级共同协商确定组织与个人的目标，并据之进行自我控制与考核。它强调“参与”“分权”“成果导向”“自我控制”四大要素。</p><p><b>实施关键：</b>目标必须自上而下层层分解，形成“目标体系”；目标要符合SMART原则（具体、可衡量、可达成、相关、有时限）；上级授权下级自我管理，以成果考核替代过程干预。</p><p><b>常考易错：</b>MBO≠简单的“自上而下下命令”，它强调“上下共同协商”；MBO≠只考核结果，它同时重视过程中的自我控制。</p>"
+    },
+    case:"<p>某销售部门年初设定年度目标“全年销售额增长15%”，但目标只由总部单方面下达，基层员工毫无参与感，也无清晰的分阶段节点。到年中发现进度不足时，才发现目标过空、缺乏可考核的分解指标。改用目标管理后，各级主管与员工共同拟定季度、月度分解目标并配套激励，按月复盘，最终超额完成。此案例说明：目标须由上下共同制定、层层分解、可量化可考核，MBO成败关键在于“参与”与“分解”。</p>",
+    pitfall:"易错提醒：①把目标管理理解为单纯的上级下达指标；②把目标当成口号而没有可量化的考核标准；③忽视计划需要随环境滚动修订。",
+    summary:"计划是管理的起点，也是控制的依据。掌握计划分类与编制步骤、理解目标管理的实质，是进入管理实操的第一个台阶。"
+  },
+  ch_org: {
+    goals:["理解组织设计的基本维度（分工、命令链、管理幅度等）","掌握常见组织结构类型的适用情境","理解集权与分权的分寸与权责对等原则"],
+    outline:["组织与组织设计的核心要素","组织结构的六大支柱","直线制·职能制·事业部制·矩阵制","集权分权与授权","权责对等是铁律"],
+    deep:{
+      kp_org_essence:"<p><b>组织设计六要素：</b>①工作专门化（分工越细越专业，但过度分工导致枯燥）；②部门化（按职能/产品/地区/顾客分组）；③命令链（谁向谁汇报的链条，强调命令统一）；④管理幅度（一名主管直接管辖的下属人数）；⑤集权与分权（决策权集中在哪一层）；⑥正规化（用制度规范化的程度）。</p><p><b>管理幅度与管理层次成反比：</b>管理幅度大 → 层级少 → 扁平结构，沟通快但主管负担重；管理幅度小 → 层级多 → 高耸结构，控制严密但沟通慢、成本高。现代组织趋势是向“扁平化”发展。</p><p><b>命令链两条原则：</b>命令统一原则（一个下属只有一个直接上级）；权利链条原则（从最高层到基层形成不间断的职权线路）。</p>",
+      kp_org_struc:"<p><b>各结构的优劣速记：</b>直线制——命令单一、权责分明，适合作业简单的小企业，但主管需全能；职能制——按职能分工专业化强，但多头领导易扯皮；直线-职能制——兼取二者之长（统一指挥+职能参谋），是多数中小企业的标准形态；事业部制——按产品/地区分权经营，适合多业务大企业，各事业部独立核算、自负盈亏；矩阵制——兼有职能与项目双链，用人机动灵活，但双头指挥易冲突；网络制/扁平化——以契约外包联结，组织轻盈灵活。</p><p><b>选择依据：</b>组织规模小用简单结构，业务多元用事业部，创新项目多用矩阵。考到“某企业该选什么结构”就从这些维度判断。</p>",
+      kp_centra:"<p><b>集权与分权的本质：</b>集权把决策权集中于高层，优点是指令统一、资源集中、利于大政方针；缺点是压抑基层积极性、应变慢。分权把决策权下放，利于调动积极性、现场应变快，但可能削弱统一协调、增加失控风险。</p><p><b>权责对等是铁律：</b>授予下属多大权力，就要配同等的责任；反之亦然。授权但不授责（把责任也一起甩给下属）是管理大忌，最终责任永远由授权者承担。</p><p><b>现实判断：</b>集权与分权不是非黑即白，而是“程度”问题，视组织规模、环境变化速度、管理者能力、业务复杂度动态调节。危机期偏集权、扩张期偏分权。</p>"
+    },
+    case:"<p>一家长三角家电集团拥有洗衣机、厨电、生活电器多条产品线。早期用直线-职能制，总部职能部统筹一切，各产品线反应迟缓。转型事业部制后，按产品线成立事业部，各事业部独立核算、独立决策，对市场响应明显加快；同时总部保留战略与财务监督权限。案例说明：业务多元化到一定程度，应采用事业部制实现“分权经营、集中监督”。</p>",
+    pitfall:"易错提醒：①认为管理幅度越大越好——幅度过大主管管不过来会失控；②认为授权后责任也随之转移——责任仍在授权者；③把集权/分权当成绝对对立。",
+    summary:"组织结构是组织运行的骨架。理解结构类型与设计维度，并掌握集分权与权责对等原则，才能为组织匹配与之匹配的骨架。"
+  },
+  ch_decision: {
+    goals:["理解决策在管理中的核心地位","掌握决策类型的分类维度","掌握决策过程的完整流程","认识常见决策偏差并学会规避"],
+    outline:["管理就是决策：西蒙","决策的类型分类","决策八步流程","决策偏差：锚定·确认·群体思维·承诺升级","有限理性与满意原则"],
+    deep:{
+      kp_dec_essence:"<p><b>为什么说管理就是决策：</b>西蒙提出“管理就是决策”，因为从计划到控制，管理每个环节都需要“选择”。管理的全过程处处是决策。</p><p><b>决策类型三套分法：</b>按环境确定程度：确定型（结果已知）、风险型（知其概率）、不确定型（不知概率）；按重要性：战略决策、管理决策、业务决策；按重复性：程序化决策（例行、有章可循）、非程序化决策（例外、无先例）。日常大量事务是程序化决策，处理例外与创新的靠非程序化决策。</p>",
+      kp_dec_steps:"<p><b>决策七步流程：</b>①识别问题→②确定决策标准→③给标准分配权重→④拟定备选方案→⑤分析备选方案→⑥选择方案→⑦实施方案并在执行中评估反馈。</p><p><b>满意原则（有限理性）：</b>由于信息、时间、能力有限，决策者不可能穷尽所有方案并追求“绝对最优”，只能在满意与可行之间选择“满意解”。这是有限理性假设下决策的现实写照。</p><p><b>个体 vs 群体决策：</b>个体决策快、责任明确、但依赖个人经验；群体决策信息全、方案多、认同度强，但耗时、可能群体思维。应急与简单问题宜用个体，复杂重大问题宜用群体。</p>",
+      kp_dec_bias:"<p><b>常见偏差逐一识破：</b>①锚定效应——先入为主，被最初信息（“锚”）框住；②确认偏差——只找支持自己观点的证据，忽略反面；③过度自信——高估自己判断的准确性；④群体思维（Groupthink）——群体追求和谐一致而压制异议，酿成集体失误；⑤承诺升级——因已投入沉没成本而不断追加投入，不肯止损。</p><p><b>应对策略：</b>多方收集反向信息、引入“魔鬼代言人”挑战主流意见、设定止损条件、对重大决策设置“冷静期”。</p>"
+    },
+    case:"<p>某公司在一次项目评审中，决策层因先前已投入大量资金而不愿终止一个明显失败的项目，理由是“已经投了这么多钱，放弃太可惜”，结果越陷越深。这正是典型的“承诺升级（沉没成本）”陷阱。正确的做法是：一切沉没成本都是过去式，应基于未来边际收益继续决策，果断止损。</p>",
+    pitfall:"易错提醒：①以为决策必须找到唯一最优解；②被沉没成本绑架；③群体决策一定优于个体——群体决策也可能因群体思维而更糟。",
+    summary:"决策是管理的核心，也是管理者最常见的日常。会“作决策”不是凭感觉拍板，而是掌握科学的决策流程、分类与偏差规避方法。"
+  },
+  ch_lead: {
+    goals:["理解领导的本质与领导≠权力的区别","掌握三大领导理论流派","掌握领导风格谱系与情境匹配","理解权力的来源与领导力的构成"],
+    outline:["领导的本质：影响力","特质·行为·权变三大理论","领导风格：独裁·民主·放任","五种权力来源","领导力来自认同而非职位"],
+    deep:{
+      kp_lead_essence:"<p><b>领导的实质：</b>领导是运用影响力引导、激励、指挥和协调成员实现组织目标的过程。领导的核心是“影响”，它来源于下属的认同与追随，而不是单纯来自职位头衔。</p><p><b>理论演进三步曲：</b>①特质理论——寻找领导者天生区别于常人的特征（自信、智慧、诚信等），但特质不能完全解释领导有效性；②行为理论——聚焦领导行为，区分“任务导向（关心工作）”与“关系导向（关心人）”，如俄亥俄与密歇根研究；③权变理论——认为没有放之四海而皆准的风格，领导有效性取决于情境匹配，代表有费德勒模型、路径-目标理论、领导生命周期理论。</p><p><b>领导生命周期理论：</b>领导风格应随下属成熟度调整——下属不成熟用命令高任务；渐成熟转为高任务高关系；更成熟转为低任务高关系；很成熟则可授权低任务低关系。</p>",
+      kp_lead_style:"<p><b>领导风格谱系：</b>独裁式（决策权集中在领导，速度快、执行强，适合紧急或低成熟度情境）；民主式（下属参与决策，认同感强、士气高，适合复杂问题与知识型团队）；放任式（几乎完全放手，适合高成熟、高自主的专业团队，但无序情境下容易失控）。</p><p><b>没有唯一最佳风格：</b>有效领导者应根据情境灵活切换。考法常是“给一个场景选风格”或“判断某风格适用条件”。</p>",
+      kp_power:"<p><b>五种权力来源（法国与雷文）：</b>法定权力（来自职位）、奖赏权力（能给予报偿）、强制权力（能实施惩罚）——三者源于职位；专家权力（懂行）、参照权力（受人尊敬追随）——二者源于个人特质。</p><p><b>职位权力≠领导力：</b>拥有人事任免权不等于拥有真正的领导力。真正的领导力来自下属发自内心的认同，即专家权力与参照权力。管理者应努力修炼专家与参照魅力，而非只靠职位的强制力。</p><p><b>常考：</b>给出一种领导行为，判断它运用了哪种权力来源。</p>"
+    },
+    case:"<p>某新任部门主管资历尚浅，仅凭职位权力下达指令要求团队加班，下属表面服从、暗中抵触。后来他主动学习业务并深入一线了解员工困难，定期给予专业性指导（专家权力）、真诚认可下属贡献（参照权力），团队凝聚力明显提升。案例说明：领导力的根基是专业与认同，而非职位高低。</p>",
+    pitfall:"易错提醒：①把领导等同于命令与权力；②认为领导风格有最优解；③把职位权力直接等同于领导力。",
+    summary:"领导解决的是“人愿不愿意跟着干”的问题。理解领导理论三流派、领导风格与情境匹配、权力来源，是成为有影响力管理者的基础。"
+  },
+  ch_motive: {
+    goals:["理解激励的含义与解决的核心问题","掌握内容型激励理论的代表与要点","掌握过程型激励理论的代表与公式","学会设计有效的激励手段"],
+    outline:["激励：解决愿不愿意干","内容型：马斯洛·双因素·成就需要","过程型：期望·公平·强化","激励设计因人而异","避免平均主义"],
+    deep:{
+      kp_mot_content:"<p><b>内容型理论研究“什么能激励人”：</b></p><p>①马斯洛需要层次：生理→安全→社交→尊重→自我实现，逐层递进，低层基本满足后追求才转向高层。管理者要先识别员工当前的主导需要。</p><p>②赫茨伯格双因素论：保健因素（工资、福利、工作条件、公司政策）只能“消除不满”，并不能带来真正的满意与激励；激励因素（成就、认可、责任、成长、晋升）才能真正激励人。注意“满意”与“不满意”不是同一连续体的两端——没有保健因素→不满意，只有保健因素→没有不满意（但也不满意不到哪去）；有激励因素→满意。</p><p>③麦克利兰成就需要论：成就需要（追求卓越）、权力需要（影响他人）、归属需要（亲和良好关系）。不同人主导需要不同，激励设计须对症下药。</p>",
+      kp_mot_process:"<p><b>过程型理论研究“激励如何发生”：</b></p><p>①弗鲁姆期望理论：激励力 M = 期望值 E × 工具性 I × 效价 V。员工只有在“努力→绩效”“绩效→报酬”“报酬→有价值”三者都成立时才受激励。任一环为0，激励为零。管理者要让员工看到三环畅通。</p><p>②亚当斯公平理论：员工会比较自己的投入产出比与他人（或历史），感到不公时会降低积极性、消极怠工或要求涨薪。管理者要确保报酬分配公平透明。</p><p>③斯金纳强化理论：通过正强化（奖励）、负强化（撤销不愉快）、惩罚来塑造行为。强化要及时、适度，以正向强化为主。</p>",
+      kp_mot_app:"<p><b>激励设计要点：</b>①物质激励（薪酬、奖金、股权）满足生存与安全感，是基础但不是全部；②精神激励（认可、晋升、授权、成长机会、荣誉）激发内在动机，成本低而效果久；③目标设定要具体且有挑战性（有挑战才激发斗志）；④报酬设计兼顾内部公平与外部竞争力，杜绝“大锅饭”“平均主义”——干多干少一个样会彻底摧毁激励；⑤因人而异、因时制宜，识别员工的个性化需要。</p>"
+    },
+    case:"<p>某工厂实行“平均发放绩效”，业绩突出的员工拿到的奖金与混日子的员工相同，很快士气低落、优秀员工离职。改用“多劳多得+多元激励”（超额奖金+公开表彰+晋升机会）后，员工积极性大幅提升。案例说明：公平与差异化的激励设计（内容型+过程型理论的综合应用）才是有效的激励。</p>",
+    pitfall:"易错提醒：①误判双因素——把工资当激励因素（其实是保健因素）；②忽视公平感——物质够了但不公平依然没激励；③激励一根筋——只发钱不重精神激励。",
+    summary:"激励回答的是“员工为什么愿意努力”。内容型解决激励的“靶点”，过程型解决激励的“机制”，两者结合才能设计出高效激励方案。"
+  },
+  ch_comm: {
+    goals:["掌握沟通的过程与构成要素","掌握沟通的方向与渠道分类","识别常见沟通障碍并掌握克服方法","理解非正式沟通的特征"],
+    outline:["沟通五要素与过程","沟通的方向与渠道","沟通障碍的六大来源","克服障碍的六把钥匙","层级越长越易失真"],
+    deep:{
+      kp_comm_essence:"<p><b>沟通过程五要素：</b>发送者→编码→渠道→解码→反馈。发送者把想法编码成信息，经渠道传递给接收者，接收者解码后给予反馈；噪声（干扰）随时可能掺入降低保真度。</p><p><b>方向分类：</b>上行（下级到上级，如汇报）、下行（上级到下级，如指令）、平行（同级部门间协调）、斜向（非直属跨部门沟通，如项目组）。良好的组织需要四条方向都畅通。</p><p><b>渠道分类：</b>正式沟通（按正式命令链传递，保真但慢）与非正式沟通（小道消息/葡萄藤，快但易失真）。非正式信息虽可能不完全准确，但常承载员工真实情绪，管理者要重视并善用。</p>",
+      kp_comm_barrier:"<p><b>障碍六大来源及应对：</b>①过滤——下级只报喜不报忧，应对：建立坦率报忧的文化；②选择性知觉——人只看到自己想看的，应对：主动核对事实；③信息超载——信息太多消化不了，应对：抓重点、用工具；④情绪——情绪影响解码，应对：先处理情绪再处理事情；⑤语言差异——术语/方言/文化差异，应对：用对方听得懂的语言；⑥组织层级——层级越多逐级失真越严重，应对：缩短传递路径、关键信息书面化＋当面确认。</p><p><b>主动倾听是克服障碍的总钥匙：</b>复述、确认、移情，确保“我听到的=你表达的”。</p>",
+      kp_comm_channel:"<p><b>渠道选择（媒介丰富度）：</b>面对面沟通丰富度最高（含语气、表情、即时反馈），适合复杂、重要、需即时协商的信息；电话/视频次之；书面邮件丰富度较低，适合正式存档、多人广而告之；公告栏适合例行信息。</p><p><b>决策口诀：</b>重要且复杂→面对面；简单且例行→书面/邮件；跨部门关键协作→选明确有记录的正式渠道，避免口头传话造成误解。</p>"
+    },
+    case:"<p>某工程项目交接时，口头口头相传导致新团队对验收标准理解偏差，返工一个月。改用“面对面交底＋书面确认单＋上线验收清单”后，误解大幅减少。案例说明：渠道选择不当是很多管理事故的元凶——越重要越复杂的信息，越要用丰富度高的渠道并留下书面记录。</p>",
+    pitfall:"易错提醒：①以为信息发出去对方就懂了——沟通的成败取决于对方“收到并理解”；②忽视非正式沟通的重要性；③层级越多越要警惕逐级失真。",
+    summary:"沟通是组织的血液。掌握沟通的机制、方向、渠道与障碍克服，是管理者降低内耗、提升协同的第一必修课。"
+  },
+  ch_control: {
+    goals:["掌握控制的过程与三类型","理解前馈·现场·反馈控制的区别与选择","掌握控制有效性的要求","理解控制与计划的联系"],
+    outline:["控制四步流程","前馈·现场·反馈","控制的及时性·客观性·经济性","例外管理原则","计划是控制的依据"],
+    deep:{
+      kp_ctl_essence:"<p><b>控制过程四步：</b>①确定标准（计划目标作为参照系）→②衡量实际绩效（测量实际执行结果）→③比较偏差（实际 vs 标准）→④采取纠偏措施（分析原因、纠正行动）。</p><p><b>三类控制如何选：</b>前馈控制（事前预防，防患未然，成本最高价值也最高，如培训、预算审批）；现场控制（事中监督，边做边纠，如主管巡视现场）；反馈控制（事后纠偏，亡羊补牢，如财务报表分析、质量检验）。理想体系以前馈为主、现场为辅、反馈兜底。</p><p><b>控制的要求：</b>及时（偏差一出现就发现）、客观（以客观标准而非主观印象）、经济（控制成本不可高于节约的价值）、例外管理（把注意力集中在关键/重大偏差上，抓大放小）。</p>",
+      kp_ctl_std:"<p><b>标准是控制的前提：</b>“无法衡量就无法管理”。标准须明确（不含糊）、可量化（有数字）、有挑战性又可达（够得着）。</p><p><b>标准类型：</b>财务标准（利润率、成本率）、质量标准（合格率、差错率）、时间标准（交期、时效）、成本标准（单位成本）。</p><p><b>控制力度与环境匹配：</b>成长扩张期宜放权、抓关键点（灵活）；危机/成熟期宜强化集中控制。控制过松会失控，过严会扼杀活力。</p>"
+    },
+    case:"<p>某餐饮连锁因只做“事后把关”（每月盘点亏损才暴露成本问题），门店损耗居高不下。引入前馈控制（订货额度与采购审批）+现场控制（日盘点抽查）+反馈控制（周成本分析）三层体系后，损耗率下降四成。案例说明：全流程控制比单纯事后补救更有效，且以前馈为主。</p>",
+    pitfall:"易错提醒：①控制只做事后；②认为控制越严格越好；③把控制与惩罚划等号——控制本质是纠偏与改进。",
+    summary:"控制是管理闭环的最后一道阀门。掌握控制三类型与有效控制的要求，才能真正让执行“不偏不倚”。"
+  },
+  ch_culture: {
+    goals:["理解组织文化的三层结构","掌握组织文化的功能与两面性","理解组织变革的障碍与管理","理解文化塑造的途径"],
+    outline:["组织文化三层：精神·制度·物质","文化的五大功能","文化的惰性与变革阻力","变革管理的策略"],
+    deep:{
+      kp_cult_essence:"<p><b>三层结构：</b>物质层（logo、办公室、形象符号等看得见的外在）是最表层；制度层（规章制度、流程）起规范作用；精神层（核心价值观、使命、信念）是核心与灵魂，越往内越稳定越难改变。判断一个组织的文化要看其精神层而非表面的口号。</p><p><b>五大功能：</b>导向功能（引导成员行为方向）、凝聚功能（凝聚人心、增强认同）、激励功能（赋予工作意义）、约束功能（软性内化约束）、辐射功能（对外塑造组织形象）。</p><p><b>两面性：</b>强文化降低成本、增强协同，但也可能造成思维固化、抗拒变革、排外。文化越强、越成熟，变革越难。</p>",
+      kp_cult_change:"<p><b>变革为何受阻：</b>习惯惰性、安全感缺失、既得利益受损、对不确定性恐惧、信息不足。个体与组织的“路径依赖”会强化对变革的抗拒。</p><p><b>变革管理策略：</b>充分沟通（讲清为什么改）、让员工参与（参与带来认同）、提供激励与支持（培训、资源）、分阶段推进（小步快跑）、领导示范（以身作则）。切忌“一锤子”强推引发反弹。</p><p><b>文化塑造途径：</b>领导示范、制度建设、仪式与故事、长期坚守。文化非一日之功，靠的是“润物细无声”的积累。</p>"
+    },
+    case:"<p>某老国企推行数字化转型，员工因害怕技能过时与岗位变动而集体消极抵抗。管理层通过开展技能培训、公开承诺“转岗不裁员”、由骨干率先示范使用新系统，并分三个季度循序渐进推进，最终平稳落地。案例说明：变革管理要“动之以情、晓之以理、授之以能、分层推进”。</p>",
+    pitfall:"易错提醒：①把文化等同于口号或装修；②认为文化只能靠惩罚塑造；③忽视文化变革中最大的阻力往往是“人”而非“技术”。",
+    summary:"组织文化是组织的“软件”，看不见却无时无刻不在影响行为。理解文化的结构与功能，并掌握变革之术，是组织持续发展的软实力。"
+  },
+  ch_obj: {
+    goals:["理解组织目标的含义与SMART要求","掌握目标分解与目标冲突的处理","理解绩效管理的闭环","掌握平衡记分卡四维度"],
+    outline:["目标的性质与SMART","目标自上而下分解","目标冲突的权衡","绩效管理闭环","平衡记分卡四维"],
+    deep:{
+      kp_obj_essence:"<p><b>目标要SMART：</b>具体（Specific）、可衡量（Measurable）、可达成（Achievable）、相关（Relevant）、有时限（Time-bound）。没有明确目标，考核就是无源之水。</p><p><b>目标分解：</b>组织目标→部门目标→员工个人目标，自上而下层层落实、形成目标网络；反过来，个人目标实现支撑部门目标，部门目标实现支撑组织目标，形成“目标支撑体系”。</p><p><b>目标冲突是常态：</b>短期利润 vs 长期投入、部门利益 vs 全局利益、质量 vs 速度，常相冲突。管理者须在约束下权衡取舍，明确优先级，必要时根据战略导向动态调整。目标管理就是靠“上下协商+自我控制”化解冲突。</p>",
+      kp_kpi:"<p><b>绩效管理闭环：</b>目标设定→过程辅导→考核评价→反馈改进，往复循环。缺了反馈改进，绩效管理就退化为“秋后算账”。</p><p><b>评价的两条铁律：</b>结果与过程并重（只重短期结果易短视，只重过程易形式主义）；标准公平透明（避免主观印象）。</p><p><b>平衡记分卡（BSC）四维：</b>财务维度（利润、成本）、客户维度（满意度、市场）、内部流程维度（效率、质量）、学习与成长维度（员工能力、创新）。它纠正了“只看财务”的短视，是战略绩效管理的经典工具。</p><p><b>考核结果要形成闭环：</b>与激励、晋升、培训挂钩，让绩效管理的价值真正落地。</p>"
+    },
+    case:"<p>某团队年初设定“提升市场份额”，却从未量化为“何时达到多少绝对值”，员工各干各的，年末无法考核。引用SMART目标＋平衡记分卡后，把目标拆解为“年内华东市场占有率提升3个百分点（财务/客户/流程/成长四维分解）”，并配套过程辅导与月度复盘，最终超额完成。案例说明：目标要可衡量、要分解、要闭环。</p>",
+    pitfall:"易错提醒：①目标不可量化；②只考核结果不看过程；③绩效考核后无反馈无闭环。",
+    summary:"目标给组织定位，绩效衡量目标的兑现。掌握SMART目标、目标分解与平衡记分卡，才能让战略真正“落地开花”。"
+  },
+  ch_lead2: {
+    goals:["理解权变管理思想的实质","理解管理是科学也是艺术","掌握在两难情境下的应变思维","识别关键约束并发力"],
+    outline:["管理方式取决于情境","权变≠没有原则","管理双性：科学与艺术","两难决策求满意解","抓关键约束"],
+    deep:{
+      kp_con_essence:"<p><b>权变思想核心：</b>管理不存在放之四海而皆准的最佳方式。组织规模、外部环境、技术条件、人员成熟度、任务确定性不同，最优做法也不同。管理者的任务是基于情境特征“对症下药”。</p><p><b>权变维度：</b>组织规模（大与小）、外部环境（稳定与动荡）、技术（例行与创新）、人员成熟度。判断一个管理动作是否得当，不能脱离情境空谈对错。</p><p><b>权变≠无章法：</b>权变不是“怎么都行”，而是“在系统分析情境后选择最合适的参照模式”，它依然以管理学规律为基础，只不过强调动态调适。</p>",
+      kp_art_lead:"<p><b>管理既科学又艺术：</b>科学性体现在管理有规律、有方法、有理论可循（学得会）；艺术性体现在管理者需灵活应变、见机行事、处理人因人而异（练得出）。用“说明书”管不了复杂的人，用“拍脑袋”也管不好复杂的组织。</p><p><b>两难决策的现实主义：</b>管理中大量情境没有唯一最优解（如裁员 vs 降薪、扩张 vs 稳健）。理性做法是：识别关键约束（预算、工期、法规、文化、权责边界），在最关键的约束上发力，求得“满意解”并控制风险，同时保留备选预案。“先求满意，再图最优”。</p><p><b>给管理者的忠告：</b>面对两难，别追求完美主义，要在“约束下做最优选择”，并学会用“错了怎么兜底”的预案思维。</p>"
+    },
+    case:"<p>某制造企业同时面临“追求季度利润”和“投入研发保长期竞争力”的冲突。权变思维下的首选不是二选一，而是按当前市场周期动态平衡：市场景气加大研发投入、市场低迷压缩开支保现金流，并在每个季度重新评估。案例说明：没有永远正确的管理决定，只有随情境动态调整、抓关键约束的管理智慧。</p>",
+    pitfall:"易错提醒：①把权变等同于“没有原则、怎么都行”；②在两难决策中追求绝对最优而错失时机；③忽视识别关键约束。",
+    summary:"管理的终极修炼是“权变”：在科学规律与艺术应变之间，因时因地因人而宜，于约束中求满意解、控风险。这是管理智慧的最高境界，也是本章学习的目标。"
+  }
+};
 </script>
 <script>
 /* ===================== 趣味问答题库 ===================== */
@@ -1300,7 +1464,7 @@ function startQuiz(){
   if(pool.length===0){ openModal('<div class="modal-card"><h3>题目不足</h3><div class="kn-card">当前已选题型/难度下没有可用题目，请调整设置。</div><div class="push-right"><button class="btn primary" onclick="closeModal()">知道了</button></div></div>'); return; }
   const n = Math.min(quizCount, pool.length);
   const picked = shuffle(pool).slice(0,n);
-  quizState={ idx:0, items:picked.map(q=>({q, ans:null, correct:false, knWrong:false})), score:0, correct:0 };
+  quizState={ idx:0, items:picked.map(q=>({q, ans:null, correct:false, knWrong:false, submitted:undefined})), score:0, correct:0 };
   showQuizSetup(false); showQuizResult(false); showQuizRun(true);
   renderQuizQuestion();
   startQuizTimer();
@@ -1317,7 +1481,8 @@ function renderQuizQuestion(){
   const typeNames={judge:'判断题',single:'单选题',multi:'多选题'};
   const qel=document.getElementById('quizQuestion');
   let typeLabel = `<span style="font-size:11.5px;background:#eef2f8;color:var(--primary);padding:2px 8px;border-radius:12px;font-weight:600">${typeNames[q.type]}</span>`;
-  qel.innerHTML = `<div style="margin-bottom:6px">${typeLabel}</div><div class="story"><p>${q.q}</p></div>`;
+  const ansBadge = it.submitted!==undefined ? (it.correct?`<span style="font-size:11.5px;background:#e7f2ec;color:var(--good);padding:2px 8px;border-radius:12px;font-weight:600;margin-left:6px">✓ 已作答正确</span>`:`<span style="font-size:11.5px;background:#f6e4e2;color:var(--bad);padding:2px 8px;border-radius:12px;font-weight:600;margin-left:6px">✗ 已作答错误</span>`) : '';
+  qel.innerHTML = `<div style="margin-bottom:6px">${typeLabel}${ansBadge}</div><div class="story"><p>${q.q}</p></div>`;
   if(q.type==='judge'){
     document.getElementById('quizChoices').innerHTML = ['对','错'].map((t,k)=>choiceHtml('quiz',k,t, it.ans===k)).join('');
   } else {
@@ -1352,14 +1517,23 @@ function pickChoice(prefix,k){
 function submitQuiz(){
   const it=quizState.items[quizState.idx]; const q=it.q;
   const ans=it.ans;
+  if(ans===undefined||ans===null||(Array.isArray(ans)&&ans.length===0)){
+    openModal('<div class="modal-card"><h3>请先作答</h3><div class="kn-card">本题尚未作答，请先选择一个选项再提交。</div><div class="push-right"><button class="btn primary" onclick="closeModal()">好的</button></div></div>'); return;
+  }
+  // 计算是否正确
   let isCorrect;
   if(q.type==='judge') isCorrect = (ans===0&&!q.correct)||(ans===1&&q.correct);
   else if(q.type==='single') isCorrect = ans===q.correct;
-  else { const a=(ans||[]).slice().sort().join(','); const c=q.correct.slice().sort().join(','); isCorrect = a===c; }
-  if(ans===undefined||(q.type!=='judge'&&q.type!=='single'&&!ans)||ans===null||(Array.isArray(ans)&&ans.length===0)){ openModal('<div class="modal-card"><h3>请先作答</h3><div class="kn-card">本题尚未作答，请先选择一个选项再提交。</div><div class="push-right"><button class="btn primary" onclick="closeModal()">好的</button></div></div>'); return; }
+  else { const a=ans.slice().sort().join(','); const c=q.correct.slice().sort().join(','); isCorrect = a===c; }
+  // 若本题此前已提交过，先撤销旧分数，避免重复计分
+  if(it.submitted!==undefined){
+    if(it.correct){ quizState.score -= (q.diff===2?2:1); quizState.correct--; }
+    else if(it.knWrong){ /* 撤销本会话内错误标记，已写入累计档案的薄弱记录保留 */ }
+  }
+  it.submitted=true;
   it.correct=isCorrect;
-  if(isCorrect){ quizState.score+= (q.diff===2?2:1); quizState.correct++; }
-  else { markWrong(q.kn); it.knWrong=true; }
+  if(isCorrect){ quizState.score+=(q.diff===2?2:1); quizState.correct++; }
+  else { it.knWrong=true; markWrong(q.kn); }
   // 显示评价反馈
   const typeNames={judge:'判断',single:'单选',multi:'多选'};
   const correctLabel = q.type==='judge' ? (q.correct?'对':'错') : (q.type==='single'? 'ABCDEFGHIJK'[q.correct] : q.correct.map(k=>'ABCDEFGHIJK'[k]).join('、'));
@@ -1367,10 +1541,12 @@ function submitQuiz(){
   let fb = isCorrect
     ? `<div class="verdict good"><h4>✓ 回答正确</h4><div style="margin-top:4px">${q.explain}</div></div>`
     : `<div class="verdict bad"><h4>✗ 回答错误（正确答案：${correctLabel}，你的选择：${myLabel}）</h4><div style="margin-top:4px">${q.explain}</div><div style="margin-top:8px"><button class="btn sm primary" onclick="openKnCard('${q.kn}','q')">查看知识点卡片</button> ${it.knWrong?'<span class="chip weak" style="margin-left:6px">已标记为薄弱</span>':''}</div></div>`;
-  openModal(`<div class="modal-card"><h3>${typeNames[q.type]} · 反馈</h3>${fb}<div class="push-right"><button class="btn primary" onclick="closeModal();">${quizState.idx===quizState.items.length-1?'查看结果':'下一题'}</button></div></div>`);
+  openModal(`<div class="modal-card"><h3>${typeNames[q.type]} · 反馈</h3>${fb}<div class="push-right"><button class="btn primary" onclick="quizNext()">${quizState.idx>=quizState.items.length-1?'查看结果':'下一题'}</button></div></div>`);
 }
 function quizNext(){ closeModal(); if(quizState.idx>=quizState.items.length-1){ finishQuiz(); } else { quizState.idx++; renderQuizQuestion(); } }
-function quizPrev(){ if(quizState.idx===0)return; quizState.idx--; renderQuizQuestion(); }
+/* 直接跳到下一题（不提交，未作答题目跳过） */
+function quizNextRaw(){ if(quizState.idx>=quizState.items.length-1){ finishQuiz(); } else { quizState.idx++; renderQuizQuestion(); } }
+function quizPrev(){ if(quizState.idx===0){ return; } quizState.idx--; renderQuizQuestion(); }
 function endQuiz(){ openModal(`<div class="modal-card"><h3>结束本轮</h3><div class="kn-card">已答 ${quizState.idx+1} / ${quizState.items.length} 题。提前结束将不计入已答之外的成绩。</div><div class="push-right"><button class="btn" onclick="closeModal()">继续作答</button><button class="btn danger" onclick="closeModal(); finishQuiz(true)">确认结束</button></div></div>`); }
 
 function finishQuiz(early){
@@ -1561,8 +1737,54 @@ function openKnCard(kn, from){
   openModal(`<div class="modal-card"><button class="close-x" onclick="closeModal()">✕</button>
     <h3>知识点卡片${nm} ${p.chapterTitle} · ${p.title}</h3>
     <div class="kn-card">${p.body}</div>
-    <div class="push-right"><button class="btn primary" onclick="closeModal(); switchTab('knowledge'); scrollToKn('${kn}')">前往本章节完整学习 →</button></div>
+    ${CHAPTER_STUDY[p.chapterId] && CHAPTER_STUDY[p.chapterId].deep[p.id] ? `<div class="kn-card" style="background:#fdf7f6;border-color:#ecd4d0"><h4 style="color:var(--bad)">深度精讲</h4>${CHAPTER_STUDY[p.chapterId].deep[p.id]}</div>`:''}
+    <div class="push-right"><button class="btn primary" onclick="closeModal(); openChapterStudy('${p.chapterId}','${kn}')">前往本章节完整学习 →</button></div>
   </div>`);
+}
+/* =============== 章节完整学习详细页 =============== */
+function openChapterStudy(chId, focusKn){
+  const ch=KNOWLEDGE_CHAPTERS.find(c=>c.id===chId); if(!ch) return;
+  const sd=CHAPTER_STUDY[chId]||{goals:[],outline:[],deep:{},case:'',pitfall:'',summary:''};
+  const weak=weakSet();
+  let deepHtml='';
+  // 先构建一个 知识点直达 目录
+  const tocHtml=new Set(ch.points.map(p=>`<span class="toc-item" onclick="closeModal(); scrollStudyPoint('${p.id}')">${p.title}${weak[p.id]?' ⚠':''}</span>`));
+  // 逐点精讲：正文 + 深度
+  ch.points.forEach((p,idx)=>{
+    const w=weak[p.id]?' <span class="badge-weak">薄弱</span>':'';
+    const deep=sd.deep[p.id]||'';
+    deepHtml+=`<div class="study-block" id="sp_${p.id}">
+      <h4><span class="no">${idx+1}</span>${p.title}${w}</h4>
+      <div class="study-point"><div class="pb">${p.body}</div></div>
+      ${deep?`<div class="study-note" style="background:#fffdf7;border-color:#e8dcc2;color:#7a5a24"><b>深度延伸：</b>${deep}</div>`:''}
+    </div>`;
+  });
+  let goalsHtml=sd.goals&&sd.goals.length?`<div class="study-block"><h4><span class="no">★</span>学习目标</h4><ul class="study-list">${sd.goals.map(g=>`<li>${g}</li>`).join('')}</ul></div>`:'';
+  let outlineHtml=sd.outline&&sd.outline.length?`<div class="study-block"><h4><span class="no">≡</span>本章知识脉络</h4><div class="study-toc">${Array.from(tocHtml).join('')}</div></div>`:'';
+  let caseHtml=sd.case?`<div class="study-block"><h4><span class="no">案</span>经典案例</div><div class="study-case">${sd.case}</div></div>`:'';
+  let pitfallHtml=sd.pitfall?`<div class="study-block"><h4><span class="no">!</span>易错提醒</div><div class="study-note">${sd.pitfall}</div></div>`:'';
+  let summaryHtml=sd.summary?`<div class="study-block"><h4><span class="no">✓</span>本章小结</div><div class="study-summary">${sd.summary}</div></div>`:'';
+  openModal(`<div class="modal-card study-modal"><button class="close-x" onclick="closeModal()">✕</button>
+    <div class="study-hero">
+      <div class="num">第${ch.num}章 · 完整学习</div>
+      <h3>${ch.title}</h3>
+      <div class="desc">${ch.intro}</div>
+    </div>
+    ${goalsHtml}
+    ${outlineHtml}
+    ${deepHtml}
+    ${caseHtml}
+    ${pitfallHtml}
+    ${summaryHtml}
+    <div class="push-right" style="margin-top:14px"><button class="btn" onclick="closeModal(); switchTab('quiz')">去做本章练习 →</button></div>
+  </div>`);
+  if(focusKn){ setTimeout(()=>scrollStudyPoint(focusKn),80); }
+}
+function scrollStudyPoint(knId){
+  const el=document.getElementById('sp_'+knId); if(!el) return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.style.borderColor='var(--primary)'; el.style.boxShadow='0 0 0 2px var(--primary)';
+  setTimeout(()=>{ el.style.borderColor=''; el.style.boxShadow=''; },1600);
 }
 function scrollToKn(kn){ setTimeout(()=>{ const el=document.querySelector(`.chapter[data-chapter="`+KN_INDEX[kn].chapterId+`"]`); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.boxShadow='0 0 0 2px var(--primary)'; setTimeout(()=>el.style.boxShadow='',1600); } },100); }
 function switchToKn(kn){ switchTab('knowledge'); }
@@ -1590,6 +1812,9 @@ function renderKnowledge(){
         const w=weak[p.id];
         return `<li onclick="openKnCard('${p.id}','k')"><span class="dot" style="${w?'background:var(--bad)':''}"></span><span>${p.title}${w?' <span class="chip weak">薄弱</span>':''}</span></li>`;
       }).join('')}</ul>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn sm primary" onclick="openChapterStudy('${ch.id}')">📖 本章完整学习</button>
+      </div>
     </div>`;
   });
   map.innerHTML=html;
